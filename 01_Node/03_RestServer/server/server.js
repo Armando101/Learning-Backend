@@ -1,6 +1,6 @@
+const { PORT } = require('./config/config');
 const express = require('express');
 const app = express();
-const port = 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -11,9 +11,17 @@ app.get('/usuario', (req, res) => {
 
 app.post('/usuario', (req, res) => {
   let body = req.body;
-  res.json({
-    body
-  })
+
+  if (body.name) {
+    res.json({
+      persona: body
+    });
+  } else {
+    res.status(400).json({
+      ok: false,
+      message: 'Name is necessary'
+    });
+  }
 });
 
 app.put('/usuario/:id', (req, res) => {
@@ -27,6 +35,6 @@ app.delete('/usuario', (req, res) => {
   res.send('delete Usuarios');
 });
 
-app.listen(port, () => {
-  console.log(`Escuchando en el puerto ${port}`);
+app.listen(PORT, () => {
+  console.log(`Escuchando en el puerto ${PORT}`);
 })
