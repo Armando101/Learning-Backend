@@ -1,5 +1,7 @@
 const { PORT } = require('./config/config');
 const express = require('express');
+const mongoose = require('mongoose');
+
 const app = express();
 
 app.use(express.json());
@@ -33,6 +35,19 @@ app.put('/usuario/:id', (req, res) => {
 
 app.delete('/usuario', (req, res) => {
   res.send('delete Usuarios');
+});
+
+
+mongoose.connect('mongodb://localhost:27017/cafe', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true
+}, (err) => {
+  if (err) {
+    console.log(err.message);
+}
+console.log('Base de Datos online');
 });
 
 app.listen(PORT, () => {
