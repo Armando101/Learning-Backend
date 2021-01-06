@@ -22,7 +22,7 @@ app.get('/usuario', (req, res) => {
       });
     }
 
-    Usuario.count({}, (err, count) => {
+    Usuario.countDocuments({}, (err, count) => {
       res.json({
         ok: true,
         usuario: usuariosDB,
@@ -74,8 +74,30 @@ app.put('/usuario/:id', (req, res) => {
   });
 });
 
-app.delete('/usuario', (req, res) => {
-  res.send('delete Usuarios');
+app.delete('/usuario/:id', (req, res) => {
+  let id = req.params.id;
+  Usuario.findByIdAndRemove(id, (err, userDeleted) => {
+    if (err) {
+      return res.status(400).json({
+        ok: false,
+        error: err
+      });
+    }
+
+    if (!userDeleted) {
+      return res.status(400).json({
+        ok: false,
+        err: {
+          message: 'User not found'
+        } 
+      })
+    }
+
+    res.json({
+      ok: true,
+      userDeleted
+    });
+  });
 });
 
 module.exports = app;
