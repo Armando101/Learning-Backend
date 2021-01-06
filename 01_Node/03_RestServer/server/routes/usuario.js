@@ -11,7 +11,7 @@ app.get('/usuario', (req, res) => {
   let limite = req.query.limite || 5;
   limite = Number(limite);
 
-  Usuario.find({}, 'name email role img state')
+  Usuario.find({state: true}, 'name email role img state')
     .skip(desde)
     .limit(limite)
     .exec((err, usuariosDB) => {
@@ -22,7 +22,8 @@ app.get('/usuario', (req, res) => {
       });
     }
 
-    Usuario.countDocuments({}, (err, count) => {
+    // State is true if the user is active
+    Usuario.countDocuments({state: true}, (err, count) => {
       res.json({
         ok: true,
         usuario: usuariosDB,
@@ -76,7 +77,16 @@ app.put('/usuario/:id', (req, res) => {
 
 app.delete('/usuario/:id', (req, res) => {
   let id = req.params.id;
-  Usuario.findByIdAndRemove(id, (err, userDeleted) => {
+  // Delets a register from database
+  // Usuario.findByIdAndRemove(id, (err, userDeleted) => {
+  
+  // Changes the state from true to false
+
+  let changeState = {
+    state: false
+  }
+
+  Usuario.findByIdAndUpdate(id, changeState, {new: true}, (err, userDeleted) => {
     if (err) {
       return res.status(400).json({
         ok: false,
