@@ -11,7 +11,7 @@ app.get('/usuario', (req, res) => {
   let limite = req.query.limite || 5;
   limite = Number(limite);
 
-  Usuario.find({})
+  Usuario.find({}, 'name email role img state')
     .skip(desde)
     .limit(limite)
     .exec((err, usuariosDB) => {
@@ -21,10 +21,15 @@ app.get('/usuario', (req, res) => {
         error: err.errors
       });
     }
-    res.json({
-      ok: true,
-      usuario: usuariosDB
+
+    Usuario.count({}, (err, count) => {
+      res.json({
+        ok: true,
+        usuario: usuariosDB,
+        count
+      });
     });
+
   })
 });
 
