@@ -1,5 +1,7 @@
+const { SEED, EXPIRATION_TOKEN } = require('../config/config');
 const express = require('express');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Usuario = require('../models/usuario');
 const app = express();
 
@@ -32,10 +34,14 @@ app.post('/login', (req, res) => {
       });
     }
 
+    let token = jwt.sign({
+      user: usuarioDB
+    }, SEED, {expiresIn: EXPIRATION_TOKEN});
+
     res.json({
       ok: true,
       user: usuarioDB,
-      token: 123
+      token
     });
 
   });
