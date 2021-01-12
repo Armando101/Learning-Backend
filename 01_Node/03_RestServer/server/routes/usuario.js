@@ -3,7 +3,7 @@ const Usuario = require('../models/usuario');
 const app = express();
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
-const { verificaToken } = require('../middlewares/auth');
+const { verificaToken, verificaAdminRole } = require('../middlewares/auth');
 
 app.get('/usuario', verificaToken, (req, res) => {
   let desde = req.query.desde || 0;
@@ -35,7 +35,7 @@ app.get('/usuario', verificaToken, (req, res) => {
   })
 });
 
-app.post('/usuario', verificaToken, (req, res) => {
+app.post('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
   let body = req.body;
   let usuario = new Usuario({
     name: body.name,
@@ -58,7 +58,7 @@ app.post('/usuario', verificaToken, (req, res) => {
   });
 });
 
-app.put('/usuario/:id', verificaToken, (req, res) => {
+app.put('/usuario/:id', [verificaToken, verificaAdminRole], (req, res) => {
   let id = req.params.id;
   let body = _.pick(req.body, ['name', 'email', 'img', 'role', 'state']);
   
@@ -76,7 +76,7 @@ app.put('/usuario/:id', verificaToken, (req, res) => {
   });
 });
 
-app.delete('/usuario/:id', verificaToken, (req, res) => {
+app.delete('/usuario/:id', [verificaToken, verificaAdminRole], (req, res) => {
   let id = req.params.id;
   // Delets a register from database
   // Usuario.findByIdAndRemove(id, (err, userDeleted) => {
